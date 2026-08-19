@@ -2172,6 +2172,7 @@ dependencies = [
     { name = "lxml" },
     { name = "openai" },
     { name = "pypdf" },
+    { name = "requests" },
 ]
 
 [package.metadata]
@@ -2181,6 +2182,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.1.1" },
     { name = "openai", specifier = ">=3.0.0" },
     { name = "pypdf", specifier = ">=6.16.0" },
+    { name = "requests", specifier = ">=2.34.2" },
 ]
 
 [[package]]
