@@ -71,7 +71,7 @@ harder eval questions interesting.
   Map 1.1 runs several clauses with an embedded list. Chunk sizes will be
   uneven, and this will affect decisions like prepending along the way. 
 
-## Wednesday 19 August
+## Wednesday 19 August (Ingestion)
 
 ### Change of note format
 
@@ -85,13 +85,29 @@ We first built scripts/fetch.py. This serves as a simple script to call the HTTP
 
 The next logical step would be then to go on to build the parser. However, I chose to go for an inspection step first (script/inspect_nist.py), to see how the html was actually like before parsing. This was a good idea. There were many findings from the inpection (all data was stored in "th" headers and not "td" data, category cells use rowspan to span multiple rows) which guided the building of the parser. (carry the last seen category forward across rows, etc)
 
-We then moved on to the actual parser (ingest/parse_nist.py). Had some help from Claude here as it was the first time I wrote parsing algorithm. My first attempt without Claude has a few real bugs such as a return statement sitting inside a loop. We took the learnings from the inspection as a guide when building the parser, and stored the data in a structured JSONL file. We chose JSONL as it allows for streaming without loding the whole file into memory, alongside other advantages. We also chose to have 2 different ids per record - a display id which retains what has been printed from the actual NIST document, and a chunk id, which is a normalised and standardised id version which makes storing of the data more systematic and prevents clashes, and prevents the issue of false positives due to formatting differences. We chose to differentiate embed_text from text, where embed_text has its parent category prepended to give the embedding model more to work with. We do not display this richer version as it creates noise that confuses the scorer. 
+We then moved on to the actual parser (ingest/parse_nist.py). Had some help from Claude here as it was the first time I wrote parsing algorithm. My first attempt without Claude has a few real bugs such as a return statement sitting inside a loop. We took the learnings from the inspection as a guide when building the parser, and stored the data in a structured JSONL file. We chose JSONL as it allows for streaming without loding the whole file into memory, alongside other advantages. We also chose to have 2 different ids per record - a display id which retains what has been printed from the actual NIST document, and a chunk id, which is a normalised and standardised id version which makes storing of the data more systematic and prevents clashes, and prevents the issue of false positives due to formatting differences. We chose to differentiate embed_text from text, where embed_text has its parent category prepended to give the embedding model more to work with. We do not display this richer version as it creates noise that confuses the scorer. Chunking naturally was by subcategory, as this is NIST's citable unit.  
 
 We then wrote a validation step (ingest//validate_nist.py). This acts as a holistic check for the data (normalisation, function numbers, total record numbers, leaked html), and we validated the parsed data with this, returning no failures. We ended the session off with a manual check of 10 random samples to ensure the parsing was accurate. 
 
 ### Main learnings
 
 I think the main lesson for me this session was to always inspect the data before building any parser. Different data structures and formats require differents kinds of considerations being taken into account when building a parser, and if you parse data without inspecting it you might waste time and effort having to rebuild one. Also to always validate the data after your parse it. The last thing you want is for the RAG chatbot to fail because of something wrong with the first step of ingestion. Getting ingestion right builds a strong foundation for the entire application. 
+
+## Wednesday 19 August (Retrieval)
+
+### What got done
+
+As a follow up on the previous session having parsed the NIST data, I focused on embedding the data, and querying the data to ensure that the retrieval pipeline was working well. I chose to do this first over parsing the EU AI Act as I wanted to focus on getting the whole pipeline working before confusing myself with more data. 
+
+Building the embedding script (ingest/embed_nist), I chose to go with ChromaDB as the vector database, and using Chroma's default embedding model, MiniLM, which converts each chunk in the data into a 384-dimension vector which is stored in the collection "governance docs" Today was also spent mostly understanding how embedding and retrieval actually works (i.e. the math behind it). A decision to use Chroma's persistent mode was made, the obvious choice as we would need persistent storage of the vectors across sessions. Metadata was also stored with the vectors to be retrieved for scoring and display. 
+
+I then moved on to the query script (ingest/query_nist) which main function was to take a plain-english question and use the same embedding model to convert that plan english query into embeddings, to make retrival through cosine similarity possible. (Chroma's distance field displays distance = 1 - cosine_similarity, so lower distance is more similar) I then tested the retrival pipeline, and discovered a siginificant issue. (read more in RESULTS.MD Embedding strategy: category-prepending experiment, 19 Aug 2026). The short of it is that the original decision I made to prepend every subcategory with the parent categroy turned out to backfire, as it introduced noise which affected the precision of retrival. After doing a simple experiment, I decided to remove the prepending, and embed 'text' instead of 'embed_text" in the embed_nist. (A quick look at the results: before: 1.16, essentially tied for rank 1; after: 0.82, clear rank 1 with 0.4 separation.) Evidence can still be seen where I parse out the category 'embed_text' in the parser, so that readrs know this experiement was real.
+
+### Main Learnings
+
+Design decisions can be wrong. And thats why, every decision will have to be tested. In theory, prepending the category to each subcategory sounded good, giving the embedding model more to work with which can result in better retrieval, but it turns out to be wrong, and as such, developers will need to be adaptable, and always willing to run these small experiements to ensure desicions made has been backed by real-life evidence. And to always be open to admitting ones deicions was wrong, and pivoting because of it. 
+
+Apart from that, many learnings on how embeddings actually works under the hood. 
 
 
 
