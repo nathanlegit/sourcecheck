@@ -66,7 +66,7 @@ def parse_nist(input_file: str) -> list[dict]:
                 "category_id": current_category_id,
                 "category_text": current_category_text,
                 "text": statement,
-                "embed_text": f"{current_category_id}: {current_category_text} | {display_id}: {statement}",
+                "embed_text": f"{current_category_id}: {current_category_text} | {display_id}: {statement}", #prepends the category to it so to give the embedding model more to work with. We also dont display the richer version as it confuses the scorer. This was a hypothesis tested (see RESULTS.MD Embedding Stategy experiment on 19 August 2026. Was found to be hurting precision more than helping recall, hence embed_text design is not used for the embedding step anymore)
                 "scored": True,
                 "source_url": SOURCE_URL,
                 "retrieved": RETRIEVED,

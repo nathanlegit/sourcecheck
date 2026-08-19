@@ -4,8 +4,7 @@
 
 ### What got done
 
-**Project scoping.** An evaluation harness measuring the groundedness of a
-RAG chatbot answering questions on international AI governance documents.
+**Project scoping.** An evaluation harness measuring the groundedness of a RAG chatbot answering questions on international AI governance documents.
 
 Architecture: I decided to go with a 2 agent architecture: A retriever searches the vector store and returns
 top-k chunks with source metadata, and the answerer takes the question and chunks, producing an answer with inline citations, explicitly barred
@@ -86,7 +85,7 @@ We first built scripts/fetch.py. This serves as a simple script to call the HTTP
 
 The next logical step would be then to go on to build the parser. However, I chose to go for an inspection step first (script/inspect_nist.py), to see how the html was actually like before parsing. This was a good idea. There were many findings from the inpection (all data was stored in "th" headers and not "td" data, category cells use rowspan to span multiple rows) which guided the building of the parser. (carry the last seen category forward across rows, etc)
 
-We then moved on to the actual parser (ingest/parse_nist.py). Had some help from Claude here as it was the first time I wrote parsing algorithm. My first attempt without Claude has a few real bugs such as a return statement sitting inside a loop. We took the learnings from the inspection as a guide when building the parser, and stored the data in a structured JSONL file. We chose JSONL as it allows for streaming without loding the whole file into memory, alongside other advantages. We also chose to have 2 different ids per record - a display id which retains what has been printed from the actual NIST document, and a chunk id, which is a normalised and standardised id version which makes storing of the data more systematic and prevents clashes, and prevents the issue of false positives due to formatting differences. 
+We then moved on to the actual parser (ingest/parse_nist.py). Had some help from Claude here as it was the first time I wrote parsing algorithm. My first attempt without Claude has a few real bugs such as a return statement sitting inside a loop. We took the learnings from the inspection as a guide when building the parser, and stored the data in a structured JSONL file. We chose JSONL as it allows for streaming without loding the whole file into memory, alongside other advantages. We also chose to have 2 different ids per record - a display id which retains what has been printed from the actual NIST document, and a chunk id, which is a normalised and standardised id version which makes storing of the data more systematic and prevents clashes, and prevents the issue of false positives due to formatting differences. We chose to differentiate embed_text from text, where embed_text has its parent category prepended to give the embedding model more to work with. We do not display this richer version as it creates noise that confuses the scorer. 
 
 We then wrote a validation step (ingest//validate_nist.py). This acts as a holistic check for the data (normalisation, function numbers, total record numbers, leaked html), and we validated the parsed data with this, returning no failures. We ended the session off with a manual check of 10 random samples to ensure the parsing was accurate. 
 
