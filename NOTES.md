@@ -72,6 +72,35 @@ harder eval questions interesting.
   Map 1.1 runs several clauses with an embedded list. Chunk sizes will be
   uneven, and this will affect decisions like prepending along the way. 
 
-  
+## Wednesday 19 August
+
+### Change of note format
+
+I will be changing the format that I will be taking notes for this project into a prose format. I do think it is easier for me to write my thoughts down this way
+
+### What got done 
+
+Today we mainly focused on the ingestion of the NIST AI RMF framework. The framework has split into 4 main functions (Govern, Map, Measure and Manage), each with its own categories (Govern 1.1, Map 2.3 etc.). The goal is as such, to parse the document and store the data in a structured JSONL format with the statements, categories and metadata. 
+
+We first built scripts/fetch.py. This serves as a simple script to call the HTTP protocol and retrieve the html data from the official NIST website. We use SHA256 hashing as a checksum to ensure that whichever document other users download from the site can be verified to be the same one that I am using for this project. 
+
+The next logical step would be then to go on to build the parser. However, I chose to go for an inspection step first (script/inspect_nist.py), to see how the html was actually like before parsing. This was a good idea. There were many findings from the inpection (all data was stored in "th" headers and not "td" data, category cells use rowspan to span multiple rows) which guided the building of the parser. (carry the last seen category forward across rows, etc)
+
+We then moved on to the actual parser (ingest/parse_nist.py). Had some help from Claude here as it was the first time I wrote parsing algorithm. My first attempt without Claude has a few real bugs such as a return statement sitting inside a loop. We took the learnings from the inspection as a guide when building the parser, and stored the data in a structured JSONL file. We chose JSONL as it allows for streaming without loding the whole file into memory, alongside other advantages. We also chose to have 2 different ids per record - a display id which retains what has been printed from the actual NIST document, and a chunk id, which is a normalised and standardised id version which makes storing of the data more systematic and prevents clashes, and prevents the issue of false positives due to formatting differences. 
+
+We then wrote a validation step (ingest//validate_nist.py). This acts as a holistic check for the data (normalisation, function numbers, total record numbers, leaked html), and we validated the parsed data with this, returning no failures. We ended the session off with a manual check of 10 random samples to ensure the parsing was accurate. 
+
+### Main learnings
+
+I think the main lesson for me this session was to always inspect the data before building any parser. Different data structures and formats require differents kinds of considerations being taken into account when building a parser, and if you parse data without inspecting it you might waste time and effort having to rebuild one. Also to always validate the data after your parse it. The last thing you want is for the RAG chatbot to fail because of something wrong with the first step of ingestion. Getting ingestion right builds a strong foundation for the entire application. 
+
+
+
+
+
+
+
+
+
 
 
