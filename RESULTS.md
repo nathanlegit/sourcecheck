@@ -27,6 +27,6 @@ I tested the answerer's grounding constraint with 4 questions:
 3. Differently-framed (phrasing) outside-knowledge question (year of publication + signatory)
 4. Compound question where one half is answerable and one half is not
 
-All 4 were handled correctly: citations in [Display ID] format matching retrieved chunks, correct refusal on both outside-knowledge traps, and correct partial-answer splitting on the compound question.
+All 4 were handled correctly: citations in [Display ID] format matching retrieved chunks, correct refusal on both outside-knowledge traps, and correct partial-answer splitting on the compound question. The result from last 2 questions were the most informative, as it taught us the rule actually generalised rather than the model simply pattern matching the prompts worked examples back. 
 
 This is however a small test with sample size of 4. more testing will defintely have to be done, but this is just a preliminary test. 
