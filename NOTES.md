@@ -109,6 +109,24 @@ Design decisions can be wrong. And thats why, every decision will have to be tes
 
 Apart from that, many learnings on how embeddings actually works under the hood. 
 
+## Thursday 20 August
+
+#### What got done. 
+
+Today, we focused on building the foundations for the two agent architecture (agents/retriever and agents/answerer)
+
+After setting up a claude console account, we built the retriever.py script, which was essentially the query_nist.py script we wrote yesterday, but instead of printing out the chunk, we save the chunks into a list and return these chunks. This is neccessary to allow us to pass these chunks onto the answerer agent which can then use the chunks to generate a grounded response. 
+
+We then moved on to the answerer agent. The script was simple, just a few functions to concantenate the question and retrieved chunks, and the call the Anthropic client to generate an output with the Claude Sonnet model. We went with sonnet as a reasonable default.  
+
+The main part of today was engineering the prompt. The main consideration that we built this prompt with was to ensure that hthe answerer was generating responses that were fully grounded in the retrieved chunks, and not from its own knowledge that it gained from its training. We also wanted to ensure that the answere cited the sources in a specific format. We first engineered the structure of the prompt (Role, Task, What not to do, and examples), and used negative prompting as a technique to reinforce what the model cannot do. We also used the technique of few-shot promting, giving the model 3 examples (one covering outside knowledge leakage, one on missing citations, and the last on partial-information questions) and the correct answer for each example. 
+
+We ended the day off with a small experiment on the answerer agent. (See RESULTS.MD Answerer prompt validation, 20 Aug 2026 for more details). In a nutshell, we gave the answerer 4 prompts, increasing in difficulty, (a straightforward grounded question, a near-duplicate of the prompt's own outside knowledge example, a differently-framed outside knowledge trap not modelled in any example, and a compound question where only half was answerable from the corpus.) and we observed that the answerer passed all 4 tests. 
+
+### Main Learnings
+
+Prompt. Prompt. Prompt. It is arguably one of the most important things in an Agent. Writing a well structured prompt utilising good prompt engineering techniques will save you alot of time debugging down the line and help guide the model towards the desired behaviour. A bad prompt, no matter how complex, or powerful the model is, will cause results to be suboptimal, as the bullseye for the model is misaligned with that of your use case in the first place. 
+
 
 
 

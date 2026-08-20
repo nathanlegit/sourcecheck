@@ -2172,6 +2172,7 @@ dependencies = [
     { name = "lxml" },
     { name = "openai" },
     { name = "pypdf" },
+    { name = "python-dotenv" },
     { name = "requests" },
 ]
 
@@ -2182,6 +2183,7 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.1.1" },
     { name = "openai", specifier = ">=3.0.0" },
     { name = "pypdf", specifier = ">=6.16.0" },
+    { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "requests", specifier = ">=2.34.2" },
 ]
 

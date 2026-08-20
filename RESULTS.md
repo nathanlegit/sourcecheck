@@ -14,7 +14,19 @@ than sharpening individual matches.
 
 Reversed: re-embedded using bare `text` (statement only, no
 prepended category). Re-ran the same paraphrased question:
-Govern 1.1 now ranks 1st, distance 0.8206, with clear separation from the next result (Map 1.6, distance 1.1958, a gap of 0.375). 
+Govern 1.1 now ranks 1st, distance 0.8206, with clear separation from the next result (Map 1.6, distance 1.1958, a gap of 0.375). Extra sanity check questions were run, all with the same result. 
 
 Conclusion: for chunks this short and already well-defined (single sentence per subcategory), category-prepending hurt precision more than it helped recall.  `embed_text`
 field will be kept in the parsed corpus as a record of the design tried, but will not be used for embedding.
+
+## Answerer prompt validation, 20 Aug 2026
+
+I tested the answerer's grounding constraint with 4 questions:
+1. Direct question with a clear answer in the corpus
+2. Near-duplicate of the few-shot example in the prompt (outside-knowledge trap)
+3. Differently-framed (phrasing) outside-knowledge question (year of publication + signatory)
+4. Compound question where one half is answerable and one half is not
+
+All 4 were handled correctly: citations in [Display ID] format matching retrieved chunks, correct refusal on both outside-knowledge traps, and correct partial-answer splitting on the compound question.
+
+This is however a small test with sample size of 4. more testing will defintely have to be done, but this is just a preliminary test. 
