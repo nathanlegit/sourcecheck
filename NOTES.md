@@ -130,7 +130,7 @@ Prompt. Prompt. Prompt. It is arguably one of the most important things in an Ag
 ## Sat 22 Aug - Mon 24 Aug
 
 ### What got done
-This was a long session. We started out with the parsing of the EU AI Act, which was a data source that I wanted to add to diversify the use case of sourcecheck. We quickly ran into a wall, as bot-detection on the html site of the original EU AI Act (EUR-Lex) blocked us from directly downloading the content like I did for the NIST data. I chose to then go for another site (artificialintelligenceact.eu) to pull the data from after doing a check that the data on this site matched the 2024 version of the EU AI Act. 
+This was a long session. We started out with the parsing of the EU AI Act, which was a data source that I wanted to add to diversify the use case of sourcecheck. We quickly ran into a wall, as bot-detection on the html site of the original EU AI Act (EUR-Lex) blocked us from directly downloading the content like I did for the NIST data. I chose to then go for another site (artificialintelligenceact.eu) to pull the data from after doing a check that the data on this site matched the 2024 version of the EU AI Act. (through a verification of the operative text on the site against an independent EUR/Lex snippet obtained seperately)
 
 The problem was, that the data on this site was split into articles, which each article having its own distinct url. The fetch script had to be rebuilt to account for this (fetch_eu.py). We also added headers to prevent detection from any anti-bot protocols the site may have
 
@@ -141,7 +141,9 @@ tag.
 
 We then finalised the chunking strategy to chunk based on numbered points, as we believed this is the sweet spot between too little granularity (chunking based on articles) and uneccessary granularity (chunking based on sub-points) which was not practiced in real-life. 
 
+### Main Learnings
 
+Do not assume every data source you try to access is nice to you. Some sites have anti-bot protocols that you will have to find alternatives to still get the data you require. This was a real blocker for us, as we spent a lot of time reconsidering how to retrive the data, and had to do a more detailed inspection (2 python scripts) to get to writing the parser. 
 
 
 

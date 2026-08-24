@@ -40,3 +40,5 @@ Considered three granularities:
 - Article-level (one chunk per Article): rejected due to  insufficient precision. E.g. Article 2 alone has 12 numbered clauses, and citing "Article 2" would give no way to verify a specific claim against the correct sub-text.
 - Sub-point-level (separate chunks for each numbered clause AND each lettered sub-point): rejected as it adds uneccessary complexity for citation granularity that is rare in reality, as most citations reference a numbered clause ("Article 14(3)"), not to the sub-point level
 - *Numbered-clause-level* (one chunk per numbered clause): this was chosen. It Matches typical real-world citation granularity and keeps the parser's complexity proportionate to the time available.
+
+s
