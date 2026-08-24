@@ -1,11 +1,12 @@
-import requests
+import json, random
 
-url = "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=OJ:L_202401689"
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-}
-response = requests.get(url, timeout=30, headers=headers)
-print("status:", response.status_code)
-print("content-type:", response.headers.get("content-type"))
-print("bytes:", len(response.content))
+with open("corpus/parsed/eu_ai_act.jsonl") as f:
+    records = [json.loads(l) for l in f]
+
+sample = random.sample(records, 8)
+for r in sample:
+    print(f"{r['display_id']}: {r['text'][:120]}")
+
+for r in records:
+    if r["article_num"] == 113:
+        print(r)

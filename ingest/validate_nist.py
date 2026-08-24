@@ -27,8 +27,12 @@ def validate(records: list[dict]) -> None:
     if dict(counts) != EXPECTED_COUNTS: #checks the number of records per function and ensures it matches the expected counts per function. 
         failures.append(f"Expected counts for this function is {EXPECTED_COUNTS}, found {dict(counts)}")
 
-    ids = [r["chunk_id"] for r in records]
-    duplicates = [i for i, n in Counter(ids).items() if n > 1] #checks for duplicate chunk_ids and ensures there are none.
+    for r in records:
+            ids = [r["chunk_id"]]
+    duplicates = []
+    for i, n in Counter(ids).items():
+        if n > 1:
+            duplicates.append(i) #checks for duplicate chunk_ids and ensures there are none.
     if duplicates:
         failures.append(f"Found duplicate chunk_ids: {duplicates}")
 
