@@ -14,7 +14,7 @@ SYSTEM_PROMPT = Path("prompts/answerer_system.md").read_text(encoding="utf-8")
 def build_user_prompt(question: str, chunks: list[dict]) -> str:
     """Concatenates the chunks into the message itself, in a nice format"""
     excerpts = "\n\n".join(
-        f"[{c['display_id']}] {c['text']}" for c in chunks
+        f"[{c['display_id']}, {c['document']}] {c['text']}" for c in chunks
     )
     return f"Source excerpts:\n\n{excerpts}\n\nQuestion: {question}"
 

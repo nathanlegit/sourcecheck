@@ -2,7 +2,7 @@
 
 NIST AI RMF 1.0 Core: 72/72 subcategories has been parsed and structurally validated matching the expected counts of the subcatgeories. 10 -record random sample has also been manually taken and checked against the document, no discrepancies found. 
 
-## Embedding strategy: category-prepending experiment, 19 Aug 2026
+## Embedding strategy for NIST: category-prepending experiment, 19 Aug 2026
 
 Context: we originally build the parser to have two different content texts: embed_text and text. The original thought process was that prepending the subcategory with the category would give the embedding model more to work with, resulting in a more contextually accurate embedding and improve retrieval. However, preliminary tests on query_nist proved otehrwise. I then decided to do a test to decide if we should still go with this modality. 
 
@@ -41,4 +41,13 @@ Considered three granularities:
 - Sub-point-level (separate chunks for each numbered clause AND each lettered sub-point): rejected as it adds uneccessary complexity for citation granularity that is rare in reality, as most citations reference a numbered clause ("Article 14(3)"), not to the sub-point level
 - *Numbered-clause-level* (one chunk per numbered clause): this was chosen. It Matches typical real-world citation granularity and keeps the parser's complexity proportionate to the time available.
 
-s
+## EU AI Act parsing, 24 August
+
+Parsed 113 articles into 519 numbered clauses, with letter sub points folded into parent clause
+
+Initial parse poduced 500 records but validation caught 19 articles contirubuting 0 records. Found out that the cause is these articles contained no numbered clauses at all, as the parse we designed parsed based on these numbers. Fix: added a fallback so that if a article paragraphs do not match the numbered clauses format, we treat the whole article as a single chunk and parse it successfully. After the fix, records increased to 519, and validation passed. 
+
+## Cross-corpus retrieval validation, 24 Aug 2026
+
+Merged NIST (72 chunks) and EU AI Act (519 chunks) into a single Chroma collection. We confirmed cross-document retrieval works: a
+question specifically about EU AI Act human oversight correctly surfaced Article 14(2), the Human Oversight provision, at rank 2 (distance 0.5105), alongside Article 26(11) on related deployer obligations at rank 1. We also confirmed that the retrieval of NIST data is unaffected by the merge: the NIST legal-requirements question still returns Govern 1.1 at rank 1, distance 0.8206, identical to the single-corpus result from 19 Aug. 

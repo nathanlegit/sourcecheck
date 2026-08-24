@@ -146,7 +146,17 @@ We then finalised the chunking strategy to chunk based on numbered points, as we
 Do not assume every data source you try to access is nice to you. Some sites have anti-bot protocols that you will have to find alternatives to still get the data you require. This was a real blocker for us, as we spent a lot of time reconsidering how to retrive the data, and had to do a more detailed inspection (2 python scripts) to get to writing the parser. 
 
 
+## Mon 24 Aug - EU AI Act parser and validation
+
+### What got done
 
 
+We built the parser for the EU AI Act based on the findings that we got from the inspection. The parser was that was built had to be different from the one for NIST, due to the different in modality and format that the EU AI Act data was in. This resulted in an interesting way to write the parser function, which included a flush function inside the main parser function that appended a clause to the list of record once all the sub points has been appended to the main clause. (parse_eu.py)
+
+We then built a validator (validate_eu.py) based on the same principles that we used to validate the NIST data. However, once we ran the validation, we realised that there were 13 articles that did no have any clauses parsed out of them. Upon further inspection, we realised that the content in these articles did not have the numbered clauses, which was what we were parsing for in the original version of the parser. We were hence unable to retrieve any content from these articles.
+
+We edited the parser to include a fallback if no numbered clauses was found, to append the content directly into the list of records. After the fix and running the validation script, all checks passed without any issues.
+
+Using the same embedding script with minimal changes, we embedded the EU AI Act data and tested the retrieval system to see if the EU AI Act data was embedded properly. The test results were positive (see ## Cross-corpus retrieval validation, 24 Aug 2026 in RESULTS.md). we also edited the buil_user_prompt function in the answerer agent script to include the document the data was taken from to reduce ambuigity. 
 
 
