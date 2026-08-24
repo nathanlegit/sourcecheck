@@ -9,7 +9,7 @@ Context: we originally build the parser to have two different content texts: emb
 Test: embedded once with `embed_text` (category + statement),
 queried with the paraphrased question "What does NIST say about legal and regulatory requirements?" against a corpus where Govern 1.1 is the correct answer.
 
-Result: Govern 1.1 ranked 2nd, distance 1.1609, whih was essentially tied with an unrelated chunk (Govern 6.1, distance 1.1601). A sanity check querying with Govern 1.1's own exact text returned distance 0.5361 against itself, not near 0, indicating the shared category preamble was diluting every chunk under Govern 1 toward its siblings rather
+Result: Govern 1.1 ranked 2nd, distance 1.1609, which was essentially tied with an unrelated chunk (Govern 6.1, distance 1.1601). A sanity check querying with Govern 1.1's own exact text returned distance 0.5361 against itself, not near 0, indicating the shared category preamble was diluting every chunk under Govern 1 toward its siblings rather
 than sharpening individual matches.
 
 Reversed: re-embedded using bare `text` (statement only, no
@@ -30,3 +30,13 @@ I tested the answerer's grounding constraint with 4 questions:
 All 4 were handled correctly: citations in [Display ID] format matching retrieved chunks, correct refusal on both outside-knowledge traps, and correct partial-answer splitting on the compound question. The result from last 2 questions were the most informative, as it taught us the rule actually generalised rather than the model simply pattern matching the prompts worked examples back. 
 
 This is however a small test with sample size of 4. more testing will defintely have to be done, but this is just a preliminary test. 
+
+## EU AI Act chunking strategy, 22 Aug 2026
+
+Inspected Articles 1, 2, and 14 to determine chunk granularity before parsing. Confirmed structure is consistent across all three: every numbered clause (1., 2., 3. ...) and every lettered sub-point ((a), (b) ...)
+renders as a separate <p> tag, with sub-points always nested directly under their parent numbered clause.
+
+Considered three granularities:
+- Article-level (one chunk per Article): rejected due to  insufficient precision. E.g. Article 2 alone has 12 numbered clauses, and citing "Article 2" would give no way to verify a specific claim against the correct sub-text.
+- Sub-point-level (separate chunks for each numbered clause AND each lettered sub-point): rejected as it adds uneccessary complexity for citation granularity that is rare in reality, as most citations reference a numbered clause ("Article 14(3)"), not to the sub-point level
+- *Numbered-clause-level* (one chunk per numbered clause): this was chosen. It Matches typical real-world citation granularity and keeps the parser's complexity proportionate to the time available.

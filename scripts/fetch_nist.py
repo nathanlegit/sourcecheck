@@ -7,7 +7,8 @@ from urllib import response
 import requests
 
 SOURCES = {
-    "nist_core.html": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/"
+    "nist_core.html": "https://airc.nist.gov/airmf-resources/airmf/5-sec-core/",
+    "eu_ai_act.html": "https://eur-lex.europa.eu/legal-content/EN/TXT/HTML/?uri=OJ%3AL_202401689",
 }
 
 RAW_DIR = Path("corpus/raw")

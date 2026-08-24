@@ -127,8 +127,19 @@ We ended the day off with a small experiment on the answerer agent. (See RESULTS
 
 Prompt. Prompt. Prompt. It is arguably one of the most important things in an Agent. Writing a well structured prompt utilising good prompt engineering techniques will save you alot of time debugging down the line and help guide the model towards the desired behaviour. A bad prompt, no matter how complex, or powerful the model is, will cause results to be suboptimal, as the bullseye for the model is misaligned with that of your use case in the first place. 
 
+## Sat 22 Aug - Mon 24 Aug
 
+### What got done
+This was a long session. We started out with the parsing of the EU AI Act, which was a data source that I wanted to add to diversify the use case of sourcecheck. We quickly ran into a wall, as bot-detection on the html site of the original EU AI Act (EUR-Lex) blocked us from directly downloading the content like I did for the NIST data. I chose to then go for another site (artificialintelligenceact.eu) to pull the data from after doing a check that the data on this site matched the 2024 version of the EU AI Act. 
 
+The problem was, that the data on this site was split into articles, which each article having its own distinct url. The fetch script had to be rebuilt to account for this (fetch_eu.py). We also added headers to prevent detection from any anti-bot protocols the site may have
+
+After downloading all 113 articles from the site, we had to inspect the html, like what we did for the NIST data. We found that every page followed a similar layout (Top bar, Summary (with an AI generated summary), Suitable Recitals, and the footer). The actual legal text lived between the summary header and the suitable recitals header. This was done through inspect_eu_macro.py.
+
+We realised we had to go one step deeper and find out what exactly lived between these headers. That was why we wrote inspect_eu_micro.py, and found out the legal text has a constant tag, and each point (regardless of whether it is a numbered point or a sub point) was wrapped in a distinct <p>
+tag. 
+
+We then finalised the chunking strategy to chunk based on numbered points, as we believed this is the sweet spot between too little granularity (chunking based on articles) and uneccessary granularity (chunking based on sub-points) which was not practiced in real-life. 
 
 
 
