@@ -150,7 +150,6 @@ Do not assume every data source you try to access is nice to you. Some sites hav
 
 ### What got done
 
-
 We built the parser for the EU AI Act based on the findings that we got from the inspection. The parser was that was built had to be different from the one for NIST, due to the different in modality and format that the EU AI Act data was in. This resulted in an interesting way to write the parser function, which included a flush function inside the main parser function that appended a clause to the list of record once all the sub points has been appended to the main clause. (parse_eu.py)
 
 We then built a validator (validate_eu.py) based on the same principles that we used to validate the NIST data. However, once we ran the validation, we realised that there were 13 articles that did no have any clauses parsed out of them. Upon further inspection, we realised that the content in these articles did not have the numbered clauses, which was what we were parsing for in the original version of the parser. We were hence unable to retrieve any content from these articles.
@@ -158,5 +157,19 @@ We then built a validator (validate_eu.py) based on the same principles that we 
 We edited the parser to include a fallback if no numbered clauses was found, to append the content directly into the list of records. After the fix and running the validation script, all checks passed without any issues.
 
 Using the same embedding script with minimal changes, we embedded the EU AI Act data and tested the retrieval system to see if the EU AI Act data was embedded properly. The test results were positive (see ## Cross-corpus retrieval validation, 24 Aug 2026 in RESULTS.md). we also edited the buil_user_prompt function in the answerer agent script to include the document the data was taken from to reduce ambuigity. 
+
+### Main learnings
+
+Nothing much from this excercise. The way we write the parser function was interesting though, and logic is something to keep in mind as we proceed further on. 
+
+## Tues 25 Aug - 30 test questions
+
+### What got done
+
+We have built out the RAG system. Now, we move on to the 30 test question suite that we will be consistently testing the system on, so this grows into the foundation of the project. 
+
+The split that we decided for the 30 questions is as such: 18 normal, 8 edge case, and 4 adversarial. Normal questions refer to actual questions that a query will be be, refering real information in different articles/statements and asking direct questions from it. Edge case tets the judgement of the model via expliting ambuigity or gaps. Adverserial are questions that a deisgned traps. The split was decided because: normal is of the highest, because they are the bread and butter of the testing of the system, and they are also the denominator for your false positive rate. Edge cases are 8, as this is enough to cover the real categories of ambuigity. And adversarial is the lowest, as we didnt want to give redundant bait to the system. 
+
+We first work on the 18 normal questions. We decided to go with a stratified random sampling of articles/statements from EU AI act and NIST, of which we will read through and decide which ones are suitable to generate the questions from. The stratified random sampling script is at evals/stratify_testqns.py. We made sure to ensure coverage of the whole corpus and a range of question from direct ones (specifying the source) to open ones (where the model has to reference both sources and generate an answer from there)
 
 

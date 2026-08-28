@@ -31,4 +31,7 @@ for element in between:
     2. legal text also has its own distinct class, and the numbered paaragraphs each have its own clan <p> tag with no class
     3. After checking Article 2, it has been confirmed that the class name patter, et_pd_post_content_0_tb_body hols no matter which article. the 0 does not change
     4. We also realised afte checking article 2 that there are some 'Related aticles: ...' paragraphs wrapped in <p> tags in the content. Will have to filter these out in the parser.
+    5. Checking with Article 14, which has sub point under each point, confirmed that every point was all wrapped in <p> tags. This makes the parsers job easier
+
+    Chunking strategy: decided to go with chunking based on the numbered-clause level. Chunking based on articles was deeemed to be insufficient granularity, and chunking at the sub-[pint level was deemed to be be too time consuming while adding uneccessary complexity.
     """
