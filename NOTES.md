@@ -172,4 +172,14 @@ The split that we decided for the 30 questions is as such: 18 normal, 8 edge cas
 
 We first work on the 18 normal questions. We decided to go with a stratified random sampling of articles/statements from EU AI act and NIST, of which we will read through and decide which ones are suitable to generate the questions from. The stratified random sampling script is at evals/stratify_testqns.py. We made sure to ensure coverage of the whole corpus and a range of question from direct ones (specifying the source) to open ones (where the model has to reference both sources and generate an answer from there)
 
+We then moved on to the adversarial questions, which were meant to bait the system. I eventually settles on 3 failure modes: Document metadata Claude plausibly knows, Current-events knowledge that postdates/exceeds the pinned corpus, and Fabricating specificity (invents a plausible number/detail with no real training-knowledge basis, just pattern-completion pressure), and mapped the differect question to these evenly with the diversity of sources in mind as well. 
+
+Same was done for edge cases, you can see the full failure modes in the questions.py file. 
+
+### Main Learnings
+
+This was a long one, especially since this was my first time doing a evaluation question set. We spent a long time trying to figure out and architect what the various failure modes are, searching for relevant conetent in the corpus that allowed me to test this fialure mode then crafting the questions in a way that tested the failure modes. mapping the questions to not only failure modes but also corpus sources to ensure coverage of both the NIST framework and the EU AI Act was something that was challenging as well. 
+
+However, this is the foundation of the entire project, so it had to be done correctly. 
+
 
