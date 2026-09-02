@@ -182,4 +182,18 @@ This was a long one, especially since this was my first time doing a evaluation 
 
 However, this is the foundation of the entire project, so it had to be done correctly. 
 
+## Wed 2 Sep - Deterministic Scorers
+
+### What got done
+
+We have finished laying the foundation with building the RAG answerer agent, and the 30 test question suite. It is time to now start building the scorers. 
+
+We started of building the deterministic scorers. The purpose of these scorers is that they are chap, fast and unambigious. They will be run to check very basic things, before we go ahead to spend API calls on deeper evaluations with the LLM judge. We picked two scorers, citation_existence, and citation_groundedness
+
+We first worked on citation_existence. The main job of this scorer is to check if the chunk the answerer is referencing (and output in its answer as per instructions) is a real chunk that is preent in our corpus. We chose to write out a regex pattern to match the nist and eu chunks to despite explicit instructions in the answerer agent to cite its sources in a specific format (we oculd have just hardcoded this) due to the non-deterministic nature of the outputs of LLMs. we have to be prepared for a scenario where the answerer agent does not giev us the citation in the output format which we expect. We also had to take into account the bare eu citations which we saw earlier when parsing the eu document - for those articles with only one clause. we deicided to add a resolution check for these articles with the actual corpus data before accepting it as a pass, due to its ambuguity. We wrote a test suite, ran it against the corpus which passed all tests. 
+
+
+
+
+
 
