@@ -192,7 +192,13 @@ We started of building the deterministic scorers. The purpose of these scorers i
 
 We first worked on citation_existence. The main job of this scorer is to check if the chunk the answerer is referencing (and output in its answer as per instructions) is a real chunk that is preent in our corpus. We chose to write out a regex pattern to match the nist and eu chunks to despite explicit instructions in the answerer agent to cite its sources in a specific format (we oculd have just hardcoded this) due to the non-deterministic nature of the outputs of LLMs. we have to be prepared for a scenario where the answerer agent does not giev us the citation in the output format which we expect. We also had to take into account the bare eu citations which we saw earlier when parsing the eu document - for those articles with only one clause. we deicided to add a resolution check for these articles with the actual corpus data before accepting it as a pass, due to its ambuguity. We wrote a test suite, ran it against the corpus which passed all tests. 
 
+We then moved on citation_groundedness. The main point of this scorer is to check if the text from teh answerer is grounded in the cited chunk text. We first thouht of doing a pure overlap between the words in the output texts and the cited chunk text, however, we soon realised this was not a good gauge of groundedness as it does not capture semantic similarity. Especially with the answerer being told to paraphrase content to plain English, the overlap score is not a good representation of groundedness. However, we decided to keep it as it may be helpful durig auditing later on. 
 
+We decided to focus on numbers instead, as they cannot be paraphrased and is hence a much more reliable indicator. We build a check to see if the numbers that appear in the answer text appeared in the cited chunk text, flagging it if it was not. We also wrote a test suite and ran it against the corpus. We then found out that in the legal text, number may be written in prose: six instead of 6, which our regex matcher did not take into account. We then fixed it to include prose versions of the numbers. 
+
+### Main Learnings
+
+This was the first time writing deterministic check for LLM outputs. citation existence made sense to me, but I found designing groundedness tough as I found it hard something to base the scorer off once I realised we could not go by word overlap. This is applicable to other AI applications as well. 
 
 
 
